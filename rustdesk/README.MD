@@ -1,9 +1,10 @@
 # RustDesk Installation Script
 
-This PowerShell script automates the installation and configuration of the RustDesk remote desktop client.
+This PowerShell script automates the download, installation and configuration of the RustDesk remote desktop client.
 
 ## Features
 
+- **Automatic Download:** Downloads the latest `rustdesk-*.exe` from GitHub.
 - **Automatic Detection:** Searches the current directory for the latest `rustdesk-*.exe`.
 - **Auto-Elevation:** Automatically requests administrative privileges if not already running as admin.
 - **Silent Install:** Supports fully automated installation without user interaction.

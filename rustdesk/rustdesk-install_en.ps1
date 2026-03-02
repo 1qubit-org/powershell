@@ -77,6 +77,37 @@ if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Adm
 $scriptPath = $PSScriptRoot
 
 # ---------------------------------------------------------
+# Download latest Rustdesk Installer
+# ---------------------------------------------------------
+$repo = "rustdesk/rustdesk"
+$apiUrl = "https://api.github.com/repos/$repo/releases/latest"
+$filePattern = "rustdesk-*-x86_64.exe"
+$downloadPath = $PSScriptRoot
+
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+# Determine latest version & search asset
+$release = Invoke-RestMethod -Uri $apiUrl -Headers @{ "User-Agent" = "PowerShell" }
+$asset = $release.assets | Where-Object { $_.name -like $filePattern } | Select-Object -First 1
+
+if (-not $asset) {
+    Write-Error "No Asset found."
+    exit 1
+}
+
+$destFile = Join-Path $downloadPath $asset.name
+
+# Download
+Write-Host "Downloading $($asset.name)..."
+$ProgressPreference = 'SilentlyContinue'
+Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $destFile -UseBasicParsing
+$ProgressPreference = 'Continue'
+
+Write-Host "Download finished: $destFile"
+
+# Variable $destFile contains the path to EXE
+
+# ---------------------------------------------------------
 # 1. Search and select installer
 # ---------------------------------------------------------
 $installers = Get-ChildItem -Path $scriptPath -Filter "rustdesk-*.exe" | Sort-Object Name -Descending
